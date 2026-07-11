@@ -16,3 +16,5 @@ __pycache__/
 笔记/
 *.md
 image.png
+
+.vscode/
