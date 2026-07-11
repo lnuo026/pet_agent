@@ -1,5 +1,5 @@
 from google import genai
-from app.config import Settings
+from app.config import settings
 
 SYSTEM_PROMPT = """You are a "Pet Emergency Triage Assistant", focused on solely on evaluating pet emergencies. Refuse to engage with any unrelated topics.
 
@@ -111,3 +111,13 @@ Seek care immediately if: [1-2 escalation warning signs]
 - Do not recommend specific medications or dosages
 
 """
+
+client = genai.Client(api_key=settings.gemini_api_key)
+
+def call_gemini(user_message: str) -> str:
+     response = client.models.generate_content(
+          model="gemini-2.5-flash",
+          contents=user_message,
+          config={"system_instruction": SYSTEM_PROMPT}
+     )
+     return response.text
