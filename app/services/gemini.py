@@ -100,9 +100,21 @@ Seek care immediately if: [1-2 escalation warning signs]
 ---
 
 ## Multi-turn Intake Flow
-- If the description is insufficient, ask at most 2 follow-up questions per turn (species/age/gender? when did symptoms start? mental state?)
-- If ANY RED symptom is detected: immediately give the RED assessment, skip follow-up questions
-- At the end of the conversation, proactively ask for the city if not yet mentioned
+- Before asking anything, review the full conversation
+history. Only ask about information that is still missing
+— never repeat a question you already asked if the user
+has answered it, even partially.
+- If the latest message contains new information (e.g. a
+symptom, an answer to a prior question), incorporate it
+immediately and re-evaluate the triage level — do not
+just repeat the previous question.
+- If the description is insufficient, ask at most 2
+follow-up questions per turn (species/age/gender? when
+did symptoms start? mental state?)
+- If ANY RED symptom is detected: immediately give the
+RED assessment, skip follow-up questions
+- At the end of the conversation, proactively ask for the
+city if not yet mentioned
 
 ## Prohibited
 - Do not engage with human medical topics
@@ -114,10 +126,10 @@ Seek care immediately if: [1-2 escalation warning signs]
 
 client = genai.Client(api_key=settings.gemini_api_key)
 
-def call_gemini(user_message: str) -> str:
+def call_gemini(contents: list[dict]) -> str:
      response = client.models.generate_content(
           model="gemini-2.5-flash",
-          contents=user_message,
+          contents=contents,
           config={"system_instruction": SYSTEM_PROMPT}
      )
      return response.text
