@@ -1,31 +1,49 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel, Field
-from app.services import session, gemini, triage
+from app.services import session, gemini, triage, db
+from app.limiter import limiter
+
 
 router = APIRouter()
+
+FALLBACK_MESSAGE = (
+     "The system is temporarily experiencing an issue and cannot process your request.\n\n"
+     "If your pet is in an emergency, please call your local 24-hour emergency vet immediately — do not wait.\n\n"
+     "We will restore service as soon as possible."
+)
 
 class ChatRequest(BaseModel):
      # Field(..., 其他规则) = "必填 + 附加这些规则"
      message: str = Field(..., max_length=2000)
      sessionId: str
 
+
 class ChatResponse(BaseModel):
      reply: str
      triageLevel: str
      sessionId: str
 
+
+
 @router.post("/api/chat/message",response_model=ChatResponse)
-def chat(req: ChatRequest):
+@limiter.limit("10/minute")
+async def chat(request:Request, req: ChatRequest):
      history = session.get_history(req.sessionId)
      contents = history + [{"role": "user", "parts":[{"text": req.message}] }]
      
-     print(f"[DEBUG] history 里面 {len(history)} 条消息，当前用户输入 {len(contents)} 条消息")
-     print(f"[debug] constents = {contents}")
-     raw = gemini.call_gemini(contents)
+     try:
+          raw = gemini.call_gemini(contents)
+     except Exception:
+          await db.log_message(req.sessionId, "assistant", FALLBACK_MESSAGE,"unknown") 
+          raise HTTPException(status_code=503, detail=FALLBACK_MESSAGE)
+     
      parsed = triage.parse_triage(raw)
 
      session.add_message(req.sessionId, "user", req.message)
      session.add_message(req.sessionId, "model", raw)
+
+     await db.log_message(req.sessionId, "user", req.message)
+     await db.log_message(req.sessionId, "assistant", parsed["clean_text"], parsed["triage_level"])
 
      return ChatResponse(
           reply=parsed["clean_text"],
