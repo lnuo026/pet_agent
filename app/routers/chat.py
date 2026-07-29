@@ -23,7 +23,7 @@ class ChatResponse(BaseModel):
      triageLevel: str
      sessionId: str
 
-
+ 
 
 @router.post("/api/chat/message",response_model=ChatResponse)
 @limiter.limit("10/minute")
