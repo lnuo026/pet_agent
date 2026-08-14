@@ -28,20 +28,7 @@ Pet Triage API helps pet owners decide the urgency of a reported symptom. It ret
 - Limits each IP address to 10 requests per minute.
 - Writes user and assistant messages to MongoDB when `MONGO_URI` is configured and reachable.
 
-## Architecture
 
-```text
-Client / API tool
-       |
-       v
-FastAPI: POST /api/chat/message
-       |
-       +--> In-memory session history
-       |
-       +--> Gemini API --> tagged triage response
-       |
-       +--> MongoDB: pet_triage.chat_logs
-```
 
 ## Tech stack
 
