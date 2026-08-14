@@ -14,7 +14,7 @@ __pycache__/
 
 # 笔记和图片
 笔记/
-*.md
 image.png
+/Users/a11111/WorkSpace/python/agent/pet-triage/笔记/pet-triage-plan.md
 
 .vscode/
