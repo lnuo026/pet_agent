@@ -8,7 +8,7 @@ router = APIRouter()
 
 FALLBACK_MESSAGE = (
      "The system is temporarily experiencing an issue and cannot process your request.\n\n"
-     "If your pet is in an emergency, please call your local 24-hour emergency vet immediately — do not wait.\n\n"
+     "If your pet is in an emergency, please call your local 24-hour emergency vet immediately ——— do not wait.\n\n"
      "We will restore service as soon as possible."
 )
 
