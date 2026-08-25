@@ -1,4 +1,4 @@
-# Python 虚拟环境目录
+# Python 的虚拟环境目录
 .venv/
 
 # 环境变量文件（含密钥，绝对不能上传）
@@ -19,3 +19,4 @@ pet-triage-plan.md
 数学结合计划.md
 
 .vscode/
+
