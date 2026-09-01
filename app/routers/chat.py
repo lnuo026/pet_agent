@@ -7,8 +7,8 @@ from app.limiter import limiter
 router = APIRouter()
 
 FALLBACK_MESSAGE = (
-     "The system is temporarily experiencing an issue and can not process your request.\n\n"
-     "If your petis in an emergency, please call your local 24-hour emergency vet immediately ——— do not waiting.\n\n"
+     "The system is temporarily experiencing an issue and cannot process your request.\n\n"
+     "If your pet is in an emergency, please call your local 24-hour emergency vet immediately ——— do not wait.\n\n"
      "We will restore service as soon as possible."
 )
 
@@ -42,6 +42,7 @@ async def chat(request:Request, req: ChatRequest):
      session.add_message(req.sessionId, "user", req.message)
      session.add_message(req.sessionId, "model", raw)
 
+     # 写入 MongoDB
      await db.log_message(req.sessionId, "user", req.message)
      await db.log_message(req.sessionId, "assistant", parsed["clean_text"], parsed["triage_level"])
 
